@@ -1,0 +1,9 @@
+{
+  "name": "caravan",
+  "version": "0.0.1",
+  "description": "Consent-bound procurement and seller-demand guidance. EXPERIMENTAL — TEST NETWORK ONLY — NOT A FINANCIAL PRODUCT OR SERVICE — NO REAL FUNDS — AS IS, NO WARRANTY, NO LIABILITY — USE AT YOUR OWN RISK",
+  "author": { "name": "Caravan Contributors" },
+  "repository": "https://github.com/Degrudv/caravan-skill",
+  "license": "Apache-2.0",
+  "skills": ["./caravan"]
+}
