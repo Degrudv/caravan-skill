@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.degrudv/caravan",
+  "title": "Caravan",
+  "description": "Test-network group buying through nine buyer and seller tools.",
+  "version": "0.0.0",
+  "websiteUrl": "https://degrudv.github.io/caravan/sdk/",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://caravan-mcp-server.degrudv.workers.dev/mcp"
+    }
+  ]
+}

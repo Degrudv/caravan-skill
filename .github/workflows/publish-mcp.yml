@@ -1,0 +1,29 @@
+name: Publish MCP registry metadata
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtain verified publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz \
+            -o /tmp/mcp-publisher.tar.gz
+          echo 'a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  /tmp/mcp-publisher.tar.gz' | sha256sum --check
+          tar -xzf /tmp/mcp-publisher.tar.gz -C /tmp mcp-publisher
+      - name: Publish public remote endpoint metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/mcp-publisher login github-oidc
+          /tmp/mcp-publisher publish
