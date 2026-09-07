@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.degrudv/caravan",
+  "name": "io.github.Degrudv/caravan",
   "title": "Caravan",
   "description": "Test-network group buying through nine buyer and seller tools.",
   "version": "0.0.0",
