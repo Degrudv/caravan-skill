@@ -1,0 +1,144 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Caravan live public API",
+    "version": "1.0.0",
+    "description": "EXPERIMENTAL — TEST NETWORK ONLY — NOT A FINANCIAL PRODUCT OR SERVICE — NO REAL FUNDS — AS IS, NO WARRANTY, NO LIABILITY — USE AT YOUR OWN RISK. Base Sepolia testnet API; use the supported live SDK for strict validation."
+  },
+  "servers": [{ "url": "https://caravan-batch-api.degrudv.workers.dev/v1/live" }],
+  "security": [{ "capability": [] }],
+  "tags": [
+    { "name": "identity" }, { "name": "listings" }, { "name": "manifests" },
+    { "name": "seller" }, { "name": "verification" }
+  ],
+  "paths": {
+    "/identities": {
+      "post": {
+        "tags": ["identity"], "operationId": "register", "security": [],
+        "description": "Create one unverified identity. The returned capability is a secret and is never recoverable.",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EmptyObject" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" }, "400": { "$ref": "#/components/responses/JsonError" } }
+      }
+    },
+    "/intents": {
+      "post": {
+        "tags": ["listings"], "operationId": "createIntent",
+        "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }, { "$ref": "#/components/parameters/ProofOfWork" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ListingCreate" },
+        "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" }, "429": { "$ref": "#/components/responses/JsonError" } }
+      }
+    },
+    "/intents/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/EntityId" }],
+      "get": { "tags": ["listings"], "operationId": "getIntent", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "put": { "tags": ["listings"], "operationId": "updateIntent", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }, { "$ref": "#/components/parameters/ProofOfWork" }], "requestBody": { "$ref": "#/components/requestBodies/ListingUpdate" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "409": { "$ref": "#/components/responses/JsonError" } } },
+      "delete": { "tags": ["listings"], "operationId": "deleteIntent", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/Revision" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "202": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/intents/{id}/commitment": {
+      "parameters": [{ "$ref": "#/components/parameters/EntityId" }],
+      "get": { "tags": ["listings"], "operationId": "getIntentCommitmentChallenge", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "post": { "tags": ["listings"], "operationId": "commitIntent", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/intents/{id}/result": {
+      "parameters": [{ "$ref": "#/components/parameters/EntityId" }],
+      "get": { "tags": ["listings"], "operationId": "getPreparedMatchResult", "description": "Owner-only tentative result. This is not publication, reveal, commitment, or settlement.", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/offers": {
+      "post": { "tags": ["listings"], "operationId": "createOffer", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/ListingCreate" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/offers/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/EntityId" }],
+      "get": { "tags": ["listings"], "operationId": "getOffer", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "put": { "tags": ["listings"], "operationId": "updateOffer", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/ListingUpdate" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "409": { "$ref": "#/components/responses/JsonError" } } },
+      "delete": { "tags": ["listings"], "operationId": "deleteOffer", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/Revision" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "202": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests": {
+      "get": { "tags": ["manifests"], "operationId": "listActivatedManifests", "parameters": [{ "$ref": "#/components/parameters/Cursor" }, { "$ref": "#/components/parameters/Limit10" }], "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/roster/{index}": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }, { "$ref": "#/components/parameters/PageIndex" }],
+      "get": { "tags": ["manifests"], "operationId": "getActivatedRosterPage", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/reveal": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }],
+      "get": { "tags": ["manifests"], "operationId": "revealActivatedManifest", "parameters": [{ "$ref": "#/components/parameters/PaymentSignature" }], "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "402": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/commercial/{index}": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }, { "$ref": "#/components/parameters/CommercialPageIndex" }],
+      "get": { "tags": ["manifests"], "operationId": "getActivatedCommercialPage", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/agreement": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }],
+      "get": { "tags": ["manifests"], "operationId": "getActivatedAgreement", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/commitment": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }],
+      "post": { "tags": ["manifests"], "operationId": "commitActivatedManifest", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/attestation": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }],
+      "post": { "tags": ["manifests"], "operationId": "attestActivatedManifest", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/manifests/{manifestId}/attestations": {
+      "parameters": [{ "$ref": "#/components/parameters/ManifestId" }],
+      "get": { "tags": ["manifests"], "operationId": "listActivatedAttestationFacts", "parameters": [{ "$ref": "#/components/parameters/Cursor" }, { "$ref": "#/components/parameters/Limit256" }], "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/disclosure": { "get": { "tags": ["manifests"], "operationId": "getLiveDisclosure", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } } },
+    "/handoff-profile": {
+      "get": { "tags": ["seller"], "operationId": "getHandoffProfile", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "put": { "tags": ["seller"], "operationId": "setHandoffProfile", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/capacity/enrollments": {
+      "get": { "tags": ["seller"], "operationId": "getCapacityEnrollment", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "post": { "tags": ["seller"], "operationId": "enrollCapacity", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "delete": { "tags": ["seller"], "operationId": "revokeCapacityEnrollment", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/NonnegativeRevision" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/identity": { "delete": { "tags": ["identity"], "operationId": "deleteAccount", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EmptyObject" } } } }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" }, "202": { "$ref": "#/components/responses/JsonSuccess" } } } },
+    "/verification/challenges": { "post": { "tags": ["verification"], "operationId": "issueDomainChallenge", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } } },
+    "/verification/domain": { "post": { "tags": ["verification"], "operationId": "completeDomain", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } } },
+    "/agent-card": {
+      "get": { "tags": ["verification"], "operationId": "getAgentCard", "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } },
+      "post": { "tags": ["verification"], "operationId": "appendUnsignedAgentCard", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } }
+    },
+    "/verification/agent-card/challenges": { "post": { "tags": ["verification"], "operationId": "issueAgentCardChallenge", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "201": { "$ref": "#/components/responses/JsonSuccess" } } } },
+    "/verification/agent-card": { "post": { "tags": ["verification"], "operationId": "completeAgentCard", "requestBody": { "$ref": "#/components/requestBodies/JsonObject" }, "responses": { "200": { "$ref": "#/components/responses/JsonSuccess" } } } }
+  },
+  "components": {
+    "securitySchemes": {
+      "capability": { "type": "http", "scheme": "bearer", "description": "Server-issued caravan_live_ capability. Treat it as a secret; never log or place it in a URL." }
+    },
+    "parameters": {
+      "EntityId": { "name": "id", "in": "path", "required": true, "schema": { "$ref": "#/components/schemas/Ulid" } },
+      "ManifestId": { "name": "manifestId", "in": "path", "required": true, "schema": { "$ref": "#/components/schemas/Ulid" } },
+      "PageIndex": { "name": "index", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 0, "maximum": 39 } },
+      "CommercialPageIndex": { "name": "index", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 0, "maximum": 999 } },
+      "Cursor": { "name": "cursor", "in": "query", "required": false, "schema": { "type": "string" } },
+      "Limit10": { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "minimum": 1, "maximum": 10 } },
+      "Limit256": { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "minimum": 1, "maximum": 256 } },
+      "IdempotencyKey": { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$" } },
+      "ProofOfWork": { "name": "X-Caravan-PoW", "in": "header", "required": true, "schema": { "type": "string", "pattern": "^v1:[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9a-f]+$" } },
+      "PaymentSignature": { "name": "Payment-Signature", "in": "header", "required": false, "description": "Exact caller-approved mock or testnet payment evidence returned for the quote.", "schema": { "type": "string", "maxLength": 24000 } }
+    },
+    "schemas": {
+      "EmptyObject": { "type": "object", "additionalProperties": false, "maxProperties": 0 },
+      "JsonObject": { "type": "object" },
+      "Ulid": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+      "Revision": { "type": "object", "additionalProperties": false, "required": ["expectedRevision"], "properties": { "expectedRevision": { "type": "integer", "minimum": 1 } } },
+      "NonnegativeRevision": { "type": "object", "additionalProperties": false, "required": ["expectedRevision"], "properties": { "expectedRevision": { "type": "integer", "minimum": 0 } } },
+      "ListingCreate": { "type": "object", "additionalProperties": false, "required": ["body"], "properties": { "body": { "type": "object" } } },
+      "ListingUpdate": { "type": "object", "additionalProperties": false, "required": ["body", "expectedRevision"], "properties": { "body": { "type": "object" }, "expectedRevision": { "type": "integer", "minimum": 1 } } },
+      "Error": { "type": "object", "required": ["error"], "properties": { "error": { "type": "object", "required": ["code"], "properties": { "code": { "type": "string" } } } } }
+    },
+    "requestBodies": {
+      "JsonObject": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JsonObject" } } } },
+      "ListingCreate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ListingCreate" } } } },
+      "ListingUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ListingUpdate" } } } },
+      "Revision": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Revision" } } } },
+      "NonnegativeRevision": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NonnegativeRevision" } } } }
+    },
+    "responses": {
+      "JsonSuccess": { "description": "Strict JSON response; use the live SDK for operation-specific validation.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JsonObject" } } } },
+      "JsonError": { "description": "Bounded machine-readable error.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+    }
+  }
+}

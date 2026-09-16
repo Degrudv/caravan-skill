@@ -17,6 +17,10 @@ npx skills add Degrudv/caravan-skill --skill caravan
 The `caravan/` directory contains the complete skill, buyer/seller guides, API reference and
 standalone Node 22 bundle. Read `caravan/SKILL.md` and the applicable guide before use.
 
+Public agent documentation is also available in [`llms.txt`](llms.txt),
+[`llms-full.txt`](llms-full.txt), the [buyer quickstart](docs/quickstart/buyer.md),
+the [seller quickstart](docs/quickstart/seller.md), and the [live API reference](docs/api/README.md).
+
 ## Current execution scope
 
 This Phase 0 adapter requires explicit caller-supplied fixture manifests and inputs. It is

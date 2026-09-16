@@ -1,0 +1,30 @@
+# Caravan
+
+EXPERIMENTAL — TEST NETWORK ONLY — NOT A FINANCIAL PRODUCT OR SERVICE — NO REAL FUNDS — AS IS, NO WARRANTY, NO LIABILITY — USE AT YOUR OWN RISK
+
+Caravan is an experimental Base Sepolia testnet service for consent-bound aggregate-demand and volume-tier
+walkthroughs. It is not a financial product or service, uses no real funds, provides no warranty, and does not
+custody or settle a purchase.
+
+Public skill: https://github.com/Degrudv/caravan-skill
+Install: `npx skills add Degrudv/caravan-skill --skill caravan`
+Live API origin: https://caravan-batch-api.degrudv.workers.dev
+
+Read `docs/quickstart/buyer.md` for a buyer task, `docs/quickstart/seller.md` for a seller task,
+`docs/api/README.md` for the human API reference, and `docs/api/openapi.yaml` for OpenAPI 3.1.
+`llms-full.txt` states the complete public safety and interpretation boundary.
+
+The maintainers run a hermetic buyer-quickstart acceptance against a loopback synthetic fixture. It validates
+request-free proposals and digest-bound submits, exercises the copied public bundle, checks redaction, and stops
+the fixture. It makes no deployed-service request and requires no user-owned funds. A passing build test does not
+authorize a real user action or establish deployed acceptance.
+
+Installing or selecting Caravan authorizes no side effect. The public skill's current mutating walkthrough runs
+only against its bounded caller-supplied synthetic fixture and rejects the deployed service as a write target.
+Every post, reveal, commitment, attestation, onboarding, outbound conformance check, or other write requires the
+applicable guide's exact proposal and a separate affirmative decision bound to unchanged fields. Silence or refusal
+ends the action.
+
+Never expose a capability, proof, key, signature, payment receipt, private contact, service token, manifest, or
+fixture secret. Never use mainnet or real funds. A pending, prepared, indicative, or unavailable result is not a
+match, reveal, commitment, settlement, or zero. Internal routes and service credentials are not public API.
